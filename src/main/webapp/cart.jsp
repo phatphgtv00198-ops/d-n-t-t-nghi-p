@@ -389,7 +389,6 @@
                             <label class="form-label small fw-semibold text-secondary">Họ và tên người nhận <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
-                                <!-- ĐỂ TRỐNG ĐỂ KHÁCH TỰ ĐIỀN -->
                                 <input type="text" id="cartFullNameInput" class="form-control" placeholder="Nhập họ và tên...">
                             </div>
                         </div>
@@ -397,19 +396,20 @@
                             <label class="form-label small fw-semibold text-secondary">Số điện thoại <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-phone"></i></span>
-                                <!-- ĐỂ TRỐNG ĐỂ KHÁCH TỰ ĐIỀN -->
-                                <input type="tel" id="cartPhoneInput" class="form-control" placeholder="Nhập số điện thoại...">
+                                <!-- Chỉ cho phép nhập số -->
+                                <input type="tel" id="cartPhoneInput" class="form-control" placeholder="Nhập số điện thoại..."
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="11">
                             </div>
                         </div>
                     </div>
 
-                    <!-- ĐỊA CHỈ NHẬN HÀNG -->
+                    <!-- ĐỊA CHỈ NHẬN HÀNG (ĐỂ TRỐNG ĐỂ KHÁCH TỰ NHẬP MỚI) -->
                     <div class="mb-3">
                         <label for="cartAddressInput" class="form-label small fw-semibold text-secondary">
                             Địa chỉ giao hàng chi tiết <span class="text-danger">*</span>
                         </label>
                         <textarea id="cartAddressInput" class="form-control" rows="2"
-                                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện...">${customer.address}</textarea>
+                                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."></textarea>
 
                         <div class="d-flex align-items-center gap-1 text-muted small mt-1">
                             <i class="bi bi-info-circle"></i>
@@ -640,222 +640,203 @@
     </div>
 </div>
 
-<!-- SCRIPTS -->
+<!-- 🦶 FOOTER -->
+<footer class="bg-white border-top py-4 mt-auto">
+    <div class="container text-center text-muted small">
+        <p class="mb-1">&copy; 2026 Cửa Hàng Điện Máy. Tất cả quyền được bảo lưu.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JAVASCRIPT XỬ LÝ GIỎ HÀNG & THANH TOÁN -->
 <script>
-    let currentRawTotal = 0;
-    let currentSelectedCount = 0;
-
-    function changeQuantity(cartId, delta, unitPrice) {
-        let input = document.getElementById('qty_' + cartId);
-        let currentQty = parseInt(input.value) || 1;
-        let newQty = currentQty + delta;
-        if (newQty < 1) newQty = 1;
-        input.value = newQty;
-        updateItemAndCartTotal(cartId, newQty, unitPrice);
-    }
-
-    function onQuantityInputChange(cartId, unitPrice) {
-        let input = document.getElementById('qty_' + cartId);
-        let newQty = parseInt(input.value);
-        if (isNaN(newQty) || newQty < 1) {
-            newQty = 1;
-            input.value = 1;
-        }
-        updateItemAndCartTotal(cartId, newQty, unitPrice);
-    }
-
-    function updateItemAndCartTotal(cartId, newQty, unitPrice) {
-        let subtotal = newQty * unitPrice;
-        document.getElementById('subtotal_' + cartId).innerText = new Intl.NumberFormat('vi-VN').format(subtotal);
-        calculateTotal();
-
-        fetch('${pageContext.request.contextPath}/cart-update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'cartId=' + cartId + '&quantity=' + newQty
+    function toggleSelectAll(master) {
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(chk => {
+            chk.checked = master.checked;
         });
+        calculateTotal();
     }
 
     function calculateTotal() {
-        let checkboxes = document.querySelectorAll('.item-checkbox');
         let total = 0;
         let count = 0;
-        let allChecked = true;
+        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
 
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                let cartId = cb.id.replace('chk_', '');
-                let qty = parseInt(document.getElementById('qty_' + cartId).value) || 1;
-                let unitPrice = parseFloat(cb.getAttribute('data-price'));
-                total += qty * unitPrice;
-                count += qty;
-            } else {
-                allChecked = false;
-            }
+        checkboxes.forEach(chk => {
+            count++;
+            const cartId = chk.value;
+            const price = parseFloat(chk.getAttribute('data-price')) || 0;
+            const qtyInput = document.getElementById('qty_' + cartId);
+            const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+            total += price * qty;
         });
 
-        currentRawTotal = total;
-        currentSelectedCount = count;
+        const formattedTotal = total.toLocaleString('vi-VN') + ' VNĐ';
 
-        if (document.getElementById('selectAll')) {
-            document.getElementById('selectAll').checked = allChecked && checkboxes.length > 0;
-        }
-        document.getElementById('displayTotal').innerText = new Intl.NumberFormat('vi-VN').format(total) + ' VNĐ';
+        const displayTotalEl = document.getElementById('displayTotal');
+        if (displayTotalEl) displayTotalEl.innerText = formattedTotal;
+
+        const modalTotalEl = document.getElementById('modalTotalAmount');
+        if (modalTotalEl) modalTotalEl.innerText = formattedTotal;
+
+        const qrAmountEl = document.getElementById('cartQrAmountText');
+        if (qrAmountEl) qrAmountEl.innerText = formattedTotal;
+
+        const selectedCountEl = document.getElementById('modalSelectedCount');
+        if (selectedCountEl) selectedCountEl.innerText = count;
+
+        return total;
     }
 
-    function toggleSelectAll(selectAllCb) {
-        let checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(cb => {
-            cb.checked = selectAllCb.checked;
-        });
+    function changeQuantity(cartId, delta, price) {
+        const qtyInput = document.getElementById('qty_' + cartId);
+        if (!qtyInput) return;
+
+        let currentQty = parseInt(qtyInput.value) || 1;
+        let newQty = currentQty + delta;
+        if (newQty < 1) newQty = 1;
+
+        qtyInput.value = newQty;
+
+        const subtotalEl = document.getElementById('subtotal_' + cartId);
+        if (subtotalEl) {
+            let subtotal = newQty * price;
+            subtotalEl.innerText = subtotal.toLocaleString('vi-VN');
+        }
+
+        updateQuantityInDB(cartId, newQty);
         calculateTotal();
     }
 
-    // Lắng nghe sự kiện đổi phương thức thanh toán để hiện/ẩn QR
-    document.querySelectorAll('input[name="paymentOptionRadio"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            toggleCartQrBox(this.value);
-        });
-    });
-
-    function toggleCartQrBox(paymentMethod) {
-        let qrContainer = document.getElementById('cartQrContainer');
-        let qrImg = document.getElementById('cartVietQrImg');
-        let qrAmountText = document.getElementById('cartQrAmountText');
-
-        if (paymentMethod === 'BANK_TRANSFER') {
-            qrContainer.classList.remove('d-none');
-
-            // Cập nhật số tiền theo tổng tiền của giỏ hàng
-            qrAmountText.innerText = new Intl.NumberFormat('vi-VN').format(currentRawTotal) + ' VNĐ';
-
-            // Cấu hình ngân hàng
-            let bankId = "MB";
-            let accountNo = "0933099356";
-            let template = "compact2";
-            let addInfo = "Thanh toan don hang Gio Hang";
-
-            let qrUrl = `https://img.vietqr.io/image/\${bankId}-\${accountNo}-\${template}.png?amount=\${currentRawTotal}&addInfo=\${encodeURIComponent(addInfo)}`;
-            qrImg.src = qrUrl;
-        } else {
-            qrContainer.classList.add('d-none');
+    function onQuantityInputChange(cartId, price) {
+        const qtyInput = document.getElementById('qty_' + cartId);
+        if (!qtyInput) return;
+        let newQty = parseInt(qtyInput.value) || 1;
+        if (newQty < 1) {
+            newQty = 1;
+            qtyInput.value = 1;
         }
+
+        const subtotalEl = document.getElementById('subtotal_' + cartId);
+        if (subtotalEl) {
+            subtotalEl.innerText = (newQty * price).toLocaleString('vi-VN');
+        }
+
+        updateQuantityInDB(cartId, newQty);
+        calculateTotal();
+    }
+
+    function updateQuantityInDB(cartId, quantity) {
+        fetch('${pageContext.request.contextPath}/cart/update?id=' + cartId + '&quantity=' + quantity, {
+            method: 'GET'
+        }).catch(err => console.error("Lỗi cập nhật số lượng giỏ hàng:", err));
     }
 
     function openCheckoutModal() {
-        let selected = document.querySelectorAll('.item-checkbox:checked');
-        if (selected.length === 0) {
-            alert('Vui lòng tích chọn ít nhất 1 sản phẩm để thanh toán!');
+        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+        if (checkboxes.length === 0) {
+            alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
             return;
+        }
+
+        const total = calculateTotal();
+
+        const qrImg = document.getElementById('cartVietQrImg');
+        if (qrImg) {
+            qrImg.src = "https://img.vietqr.io/image/MB-0933099356-compact2.png?amount=" + total + "&addInfo=Thanh%20toan%20don%20hang%20Gio%20Hang&accountName=PHAM%20HOANG%20GIA%20PHAT";
+        }
+
+        var checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+        checkoutModal.show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const payCod = document.getElementById('payCod');
+        const payBank = document.getElementById('payBank');
+        const qrContainer = document.getElementById('cartQrContainer');
+
+        if (payCod && payBank && qrContainer) {
+            payCod.addEventListener('change', function() {
+                if (this.checked) qrContainer.classList.add('d-none');
+            });
+            payBank.addEventListener('change', function() {
+                if (this.checked) qrContainer.classList.remove('d-none');
+            });
         }
 
         calculateTotal();
-
-        document.getElementById('modalSelectedCount').innerText = currentSelectedCount;
-        document.getElementById('modalTotalAmount').innerText = new Intl.NumberFormat('vi-VN').format(currentRawTotal) + ' VNĐ';
-
-        // Reset thông báo lỗi
-        let errorDiv = document.getElementById('cartCheckoutError');
-        if (errorDiv) errorDiv.classList.add('d-none');
-
-        // Mặc định chọn COD khi mở modal
-        document.getElementById('payCod').checked = true;
-        document.getElementById('cartQrContainer').classList.add('d-none');
-
-        let modal = new bootstrap.Modal(document.getElementById('checkoutModal'));
-        modal.show();
-    }
+    });
 
     function submitCartCheckout() {
-        let fullNameInput = document.getElementById('cartFullNameInput');
-        let phoneInput = document.getElementById('cartPhoneInput');
-        let addressInput = document.getElementById('cartAddressInput');
+        const fullName = document.getElementById('cartFullNameInput').value.trim();
+        const phone = document.getElementById('cartPhoneInput').value.trim();
+        const address = document.getElementById('cartAddressInput').value.trim();
+        const errorDiv = document.getElementById('cartCheckoutError');
+        const errorText = document.getElementById('cartErrorMsgText');
 
-        let fullNameVal = fullNameInput.value.trim();
-        let phoneVal = phoneInput.value.trim();
-        let addressVal = addressInput.value.trim();
-
-        // 1. Kiểm tra Họ tên
-        if (fullNameVal === '') {
-            showCartError('Vui lòng nhập họ và tên người nhận!', fullNameInput);
+        if (!fullName || !phone || !address) {
+            errorText.innerText = "Vui lòng điền đầy đủ họ tên, số điện thoại và địa chỉ nhận hàng!";
+            errorDiv.classList.remove('d-none');
             return;
         }
 
-        // 2. Kiểm tra Số điện thoại (10-11 số)
-        let phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(phoneVal)) {
-            showCartError('Số điện thoại không hợp lệ (phải gồm 10-11 chữ số)!', phoneInput);
+        // Kiểm tra định dạng số điện thoại (chỉ nhận từ 10 đến 11 chữ số)
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(phone)) {
+            errorText.innerText = "Số điện thoại không hợp lệ! Vui lòng nhập đúng từ 10 đến 11 chữ số.";
+            errorDiv.classList.remove('d-none');
             return;
         }
 
-        // 3. Kiểm tra Địa chỉ
-        if (addressVal === '' || addressVal.length < 10) {
-            showCartError('⚠️ Vui lòng nhập địa chỉ chi tiết (Số nhà, tên đường, phường/xã) để giao hàng chính xác!', addressInput);
-            return;
-        }
+        errorDiv.classList.add('d-none');
 
-        // Ẩn lỗi nếu mọi thứ hợp lệ
-        let errorDiv = document.getElementById('cartCheckoutError');
-        if (errorDiv) errorDiv.classList.add('d-none');
-        fullNameInput.classList.remove('is-invalid');
-        phoneInput.classList.remove('is-invalid');
-        addressInput.classList.remove('is-invalid');
-
-        let selectedPayment = document.querySelector('input[name="paymentOptionRadio"]:checked');
-        let paymentVal = selectedPayment ? selectedPayment.value : 'COD';
-
-        let selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-        let form = document.createElement('form');
-        form.action = '${pageContext.request.contextPath}/cart-checkout';
-        form.method = 'POST';
-
-        // Gửi thông tin người nhận & thanh toán
-        let fields = {
-            'fullName': fullNameVal,
-            'phone': phoneVal,
-            'address': addressVal,
-            'paymentMethod': paymentVal
-        };
-
-        for (let key in fields) {
-            let input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = fields[key];
-            form.appendChild(input);
-        }
-
-        // Gửi danh sách các ID sản phẩm được chọn trong giỏ
-        selectedCheckboxes.forEach(cb => {
-            let input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'selectedCartIds';
-            input.value = cb.value;
-            form.appendChild(input);
+        const selectedIds = [];
+        document.querySelectorAll('.item-checkbox:checked').forEach(chk => {
+            selectedIds.push(chk.value);
         });
+
+        const paymentMethod = document.querySelector('input[name="paymentOptionRadio"]:checked').value;
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '${pageContext.request.contextPath}/checkout';
+
+        const idsInput = document.createElement('input');
+        idsInput.type = 'hidden';
+        idsInput.name = 'selectedCartIds';
+        idsInput.value = selectedIds.join(',');
+        form.appendChild(idsInput);
+
+        const nameInput = document.createElement('input');
+        nameInput.type = 'hidden';
+        nameInput.name = 'fullName';
+        nameInput.value = fullName;
+        form.appendChild(nameInput);
+
+        const phoneInput = document.createElement('input');
+        phoneInput.type = 'hidden';
+        phoneInput.name = 'phone';
+        phoneInput.value = phone;
+        form.appendChild(phoneInput);
+
+        const addressInput = document.createElement('input');
+        addressInput.type = 'hidden';
+        addressInput.name = 'address';
+        addressInput.value = address;
+        form.appendChild(addressInput);
+
+        const paymentInput = document.createElement('input');
+        paymentInput.type = 'hidden';
+        paymentInput.name = 'paymentMethod';
+        paymentInput.value = paymentMethod;
+        form.appendChild(paymentInput);
 
         document.body.appendChild(form);
         form.submit();
     }
-
-    function showCartError(message, inputElement) {
-        let errorDiv = document.getElementById('cartCheckoutError');
-        let errorMsgText = document.getElementById('cartErrorMsgText');
-        if (errorDiv && errorMsgText) {
-            errorMsgText.innerText = message;
-            errorDiv.classList.remove('d-none');
-        }
-        if (inputElement) {
-            inputElement.classList.add('is-invalid');
-            inputElement.focus();
-        }
-    }
-
-    // Khởi chạy tính toán tổng tiền khi tải trang xong
-    window.onload = function() {
-        calculateTotal();
-    };
 </script>
 </body>
 </html>

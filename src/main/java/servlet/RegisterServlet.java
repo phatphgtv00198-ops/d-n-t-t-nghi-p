@@ -3,6 +3,7 @@ package servlet;
 import entity.Account;
 import entity.Customer;
 import service.EntityConnectivity;
+import util.EmailUtil; // Gọi class gửi mail của bạn
 import util.ParamUtil;
 
 import jakarta.persistence.EntityManager;
@@ -13,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/register")
@@ -22,7 +24,8 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/register.jsp").forward(request, response);
+        // Nếu truy cập trực tiếp bằng GET, chuyển hướng về trang chủ
+        response.sendRedirect(request.getContextPath() + "/");
     }
 
     @Override
@@ -37,22 +40,26 @@ public class RegisterServlet extends HttpServlet {
         String password = ParamUtil.getString(request, "password").trim();
         String confirmPassword = ParamUtil.getString(request, "confirmPassword").trim();
 
-        // Lấy thêm các thông tin cá nhân (nếu form có)
+        // Lấy thêm các thông tin cá nhân
         String fullName = ParamUtil.getString(request, "fullName").trim();
         String email = ParamUtil.getString(request, "email").trim();
         String phone = ParamUtil.getString(request, "phone").trim();
         String address = ParamUtil.getString(request, "address").trim();
 
-        // 2. Kiểm tra tính hợp lệ dữ liệu (Validation)
+        HttpSession session = request.getSession();
+
+        // 2. Kiểm tra tính hợp lệ dữ liệu cơ bản
         if (username.isEmpty() || password.isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
+            session.setAttribute("registerError", "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+            session.setAttribute("isOpenRegisterModal", "true");
+            response.sendRedirect(request.getContextPath() + "/");
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            request.setAttribute("error", "Mật khẩu xác nhận không trùng khớp!");
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
+            session.setAttribute("registerError", "Mật khẩu xác nhận không trùng khớp!");
+            session.setAttribute("isOpenRegisterModal", "true");
+            response.sendRedirect(request.getContextPath() + "/");
             return;
         }
 
@@ -60,18 +67,33 @@ public class RegisterServlet extends HttpServlet {
         EntityTransaction tx = em.getTransaction();
 
         try {
-            // 3. Kiểm tra xem Username đã tồn tại chưa
-            Long count = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.username = :username", Long.class)
+            // 3. Kiểm tra xem Tên đăng nhập đã tồn tại chưa
+            Long usernameCount = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.username = :username", Long.class)
                     .setParameter("username", username)
                     .getSingleResult();
 
-            if (count > 0) {
-                request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
-                request.getRequestDispatcher("/register.jsp").forward(request, response);
+            if (usernameCount > 0) {
+                session.setAttribute("registerError", "Tên đăng nhập đã tồn tại!");
+                session.setAttribute("isOpenRegisterModal", "true");
+                response.sendRedirect(request.getContextPath() + "/");
                 return;
             }
 
-            // 4. Bắt đầu Transaction tạo Tài khoản & Thông tin Khách hàng
+            // 4. Kiểm tra xem Email đã được sử dụng ở tài khoản khác chưa
+            if (!email.isEmpty()) {
+                Long emailCount = em.createQuery("SELECT COUNT(c) FROM Customer c WHERE c.email = :email", Long.class)
+                        .setParameter("email", email)
+                        .getSingleResult();
+
+                if (emailCount > 0) {
+                    session.setAttribute("registerError", "Địa chỉ email này đã được sử dụng cho tài khoản khác!");
+                    session.setAttribute("isOpenRegisterModal", "true");
+                    response.sendRedirect(request.getContextPath() + "/");
+                    return;
+                }
+            }
+
+            // 5. Bắt đầu Transaction tạo Tài khoản & Thông tin Khách hàng
             tx.begin();
 
             // A. Tạo Account
@@ -82,10 +104,9 @@ public class RegisterServlet extends HttpServlet {
 
             em.persist(account); // Lưu Account trước để lấy ID
 
-            // B. Tạo bản ghi Customer tương ứng (Khóa ngoại kết nối 1-1 với Account)
+            // B. Tạo bản ghi Customer tương ứng
             Customer customer = new Customer();
             customer.setAccount(account);
-            // Nếu không nhập Họ tên thì lấy tạm tên đăng nhập làm Họ tên
             customer.setFullName(fullName.isEmpty() ? username : fullName);
             customer.setEmail(email.isEmpty() ? null : email);
             customer.setPhone(phone.isEmpty() ? null : phone);
@@ -96,16 +117,33 @@ public class RegisterServlet extends HttpServlet {
             // C. Xác nhận lưu toàn bộ dữ liệu vào Database
             tx.commit();
 
-            // 5. Đăng ký thành công -> Chuyển hướng sang trang đăng nhập độc lập có sẵn bố cục thương hiệu
-            response.sendRedirect(request.getContextPath() + "/login?registered=true");
+            // 6. GỬI EMAIL THÔNG BÁO ĐĂNG KÝ THÀNH CÔNG (Chạy ngầm bằng Thread để không đơ web)
+            if (email != null && !email.isEmpty()) {
+                final String recipientEmail = email;
+                final String recipientName = fullName.isEmpty() ? username : fullName;
+
+                new Thread(() -> {
+                    try {
+                        EmailUtil.sendRegistrationEmail(recipientEmail, recipientName);
+                    } catch (Exception ex) {
+                        System.err.println("Lỗi gửi email đăng ký: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                }).start();
+            }
+
+            // 7. Đăng ký thành công -> Lưu thông báo thành công và chuyển về trang chủ mở popup đăng nhập
+            session.setAttribute("registerSuccess", "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+            response.sendRedirect(request.getContextPath() + "/");
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback(); // Hoàn tác nếu có lỗi
             }
             e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi khi tạo tài khoản: " + e.getMessage());
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
+            session.setAttribute("registerError", "Đã xảy ra lỗi khi tạo tài khoản: " + e.getMessage());
+            session.setAttribute("isOpenRegisterModal", "true");
+            response.sendRedirect(request.getContextPath() + "/");
         } finally {
             em.close();
         }

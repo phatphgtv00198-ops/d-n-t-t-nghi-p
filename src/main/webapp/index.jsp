@@ -364,6 +364,12 @@
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <!-- Vùng thông báo thành công sau khi đăng ký -->
+                <div id="loginAlertMessage" class="alert alert-success py-2 mb-3 small" style="display: none;"></div>
+
+                <!-- Vùng thông báo lỗi khi đăng nhập sai -->
+                <div id="popupLoginError" class="alert alert-danger py-2 mb-3 small" style="display: none;"></div>
+
                 <form action="${pageContext.request.contextPath}/login" method="post">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold text-secondary">Tên đăng nhập <span class="text-danger">*</span></label>
@@ -410,6 +416,9 @@
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <!-- Vùng thông báo lỗi khi đăng ký không thành công -->
+                <div id="popupRegisterError" class="alert alert-danger py-2 mb-3 small" style="display: none;"></div>
+
                 <form action="${pageContext.request.contextPath}/register" method="post">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold text-secondary">Tên đăng nhập <span class="text-danger">*</span></label>
@@ -557,6 +566,80 @@
             }
         });
     }
+</script>
+
+<!-- 🌟 XỬ LÝ HIỂN THỊ MODAL TỰ ĐỘNG CHO ĐĂNG KÝ VÀ ĐĂNG NHẬP -->
+<%
+    // Lấy dữ liệu đăng ký từ Session
+    String regError = (String) session.getAttribute("registerError");
+    String isOpenRegister = (String) session.getAttribute("isOpenRegisterModal");
+    String regSuccess = (String) session.getAttribute("registerSuccess");
+
+    // Lấy dữ liệu đăng nhập từ Session
+    String loginError = (String) session.getAttribute("loginError");
+    String isOpenLogin = (String) session.getAttribute("isOpenLoginModal");
+
+    // Xóa sạch session ngay sau khi lấy để tránh bị lặp lại thông báo khi F5
+    if (isOpenRegister != null || regSuccess != null || isOpenLogin != null) {
+        session.removeAttribute("registerError");
+        session.removeAttribute("isOpenRegisterModal");
+        session.removeAttribute("registerSuccess");
+        session.removeAttribute("loginError");
+        session.removeAttribute("isOpenLoginModal");
+    }
+%>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var hasRegisterError = "<%= isOpenRegister != null ? isOpenRegister : "" %>";
+        var errorMessage = "<%= regError != null ? regError : "" %>";
+        var successMessage = "<%= regSuccess != null ? regSuccess : "" %>";
+
+        var hasLoginError = "<%= isOpenLogin != null ? isOpenLogin : "" %>";
+        var loginErrorMessage = "<%= loginError != null ? loginError : "" %>";
+
+        // 1. Đăng ký lỗi -> Mở popup đăng ký kèm lỗi
+        if (hasRegisterError === "true") {
+            var registerModalEl = document.getElementById('registerModal');
+            if (registerModalEl) {
+                var registerModal = new bootstrap.Modal(registerModalEl);
+                registerModal.show();
+            }
+            var errorContainer = document.getElementById('popupRegisterError');
+            if (errorContainer) {
+                errorContainer.innerText = errorMessage;
+                errorContainer.style.display = 'block';
+            }
+        }
+
+        // 2. Đăng ký thành công -> Mở popup đăng nhập kèm thông báo thành công
+        if (successMessage !== "") {
+            var loginModalEl = document.getElementById('loginModal');
+            if (loginModalEl) {
+                var loginModal = new bootstrap.Modal(loginModalEl);
+                loginModal.show();
+            }
+            var successContainer = document.getElementById('loginAlertMessage');
+            if (successContainer) {
+                successContainer.innerText = successMessage;
+                successContainer.style.display = 'block';
+            }
+        }
+
+        // 3. Đăng nhập sai -> Mở popup đăng nhập kèm thông báo lỗi
+        if (hasLoginError === "true") {
+            var loginModalEl = document.getElementById('loginModal');
+            if (loginModalEl) {
+                var loginModal = new bootstrap.Modal(loginModalEl);
+                loginModal.show();
+            }
+            var loginErrorContainer = document.getElementById('popupLoginError');
+            if (loginErrorContainer) {
+                loginErrorContainer.innerText = loginErrorMessage;
+                loginErrorContainer.style.display = 'block';
+            }
+        }
+    });
 </script>
 
 </body>

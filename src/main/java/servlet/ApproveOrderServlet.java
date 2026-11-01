@@ -1,7 +1,9 @@
 package servlet;
 
-import dao.OrderDAO;
 import entity.Order;
+import service.EntityConnectivity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,27 +15,49 @@ import java.io.IOException;
 @WebServlet("/staff/approve-order")
 public class ApproveOrderServlet extends HttpServlet {
 
-    private OrderDAO orderDAO = new OrderDAO();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            // 1. Lấy ID đơn hàng từ Parameter (?id=...)
             String idParam = request.getParameter("id");
-
             if (idParam != null && !idParam.trim().isEmpty()) {
                 int orderId = Integer.parseInt(idParam.trim());
 
-                // 2. Gọi updateStatus truyền trực tiếp Enum Order.OrderStatus.Paid
-                orderDAO.updateStatus(orderId, Order.OrderStatus.Paid);
+                EntityManager em = EntityConnectivity.getEntityManager();
+                EntityTransaction tx = em.getTransaction();
+
+                try {
+                    tx.begin();
+                    Order order = em.find(Order.class, orderId);
+                    if (order != null) {
+                        // 1. Chuyển trạng thái đơn hàng sang Paid/Approved để hiển thị là "Chờ giao hàng"
+                        order.setStatus(Order.OrderStatus.Paid);
+
+                        // 2. Nếu là đơn chuyển khoản ngân hàng, cập nhật luôn trạng thái thanh toán thành Paid
+                        if ("BANK_TRANSFER".equals(order.getPaymentMethod())) {
+                            order.setPaymentStatus("Paid");
+                        }
+
+                        em.merge(order);
+                    }
+                    tx.commit();
+                } catch (Exception e) {
+                    if (tx != null && tx.isActive()) {
+                        tx.rollback();
+                    }
+                    e.printStackTrace();
+                } finally {
+                    if (em != null && em.isOpen()) {
+                        em.close();
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // 3. Cập nhật xong chuyển hướng người dùng về lại trang Quản lý đơn hàng
+        // Chuyển hướng về lại trang quản lý đơn hàng của nhân viên/admin
         response.sendRedirect(request.getContextPath() + "/staff/orders");
     }
 }

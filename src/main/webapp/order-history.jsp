@@ -23,13 +23,11 @@
             color: #1e293b;
         }
 
-        /* Custom Navbar */
         .navbar-custom {
             background-color: #ffffff;
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* Order Card & Accordion Styling */
         .order-accordion-item {
             border: 1px solid #e2e8f0 !important;
             border-radius: 16px !important;
@@ -54,7 +52,6 @@
             color: #0d6efd;
         }
 
-        /* Product Image Container */
         .order-product-img {
             width: 56px;
             height: 56px;
@@ -65,7 +62,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* Custom Badges */
         .badge-status {
             padding: 0.5em 0.85em;
             border-radius: 30px;
@@ -117,7 +113,6 @@
     <!-- 📦 MAIN CONTAINER -->
     <div class="container mb-5" style="max-width: 960px;">
 
-        <!-- Header Page -->
         <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
                 <h3 class="fw-bold mb-1 border-start border-primary border-4 ps-2 text-dark">Lịch Sử Đơn Hàng</h3>
@@ -172,16 +167,25 @@
                                             </span>
                                         </div>
 
-                                        <!-- Badge Trạng Thái -->
+                                        <!-- Badge Trạng Thái Đồng Bộ -->
                                         <c:choose>
                                             <c:when test="${order.status.name() == 'Pending'}">
-                                                <span class="badge badge-status bg-warning-subtle text-warning-emphasis border border-warning-subtle d-flex align-items-center gap-1">
-                                                    <i class="bi bi-hourglass-split"></i> Chờ duyệt
-                                                </span>
+                                                <c:choose>
+                                                    <c:when test="${order.paymentMethod == 'BANK_TRANSFER' && order.paymentStatus == 'Paid'}">
+                                                        <span class="badge badge-status bg-success-subtle text-success border border-success-subtle d-flex align-items-center gap-1">
+                                                            <i class="bi bi-check-circle-fill"></i> Đã thanh toán - Chờ duyệt
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge badge-status bg-warning-subtle text-warning-emphasis border border-warning-subtle d-flex align-items-center gap-1">
+                                                            <i class="bi bi-hourglass-split"></i> Chờ duyệt
+                                                        </span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </c:when>
-                                            <c:when test="${order.status.name() == 'Paid'}">
+                                            <c:when test="${order.status.name() == 'Paid' || order.status.name() == 'Approved'}">
                                                 <span class="badge badge-status bg-success-subtle text-success border border-success-subtle d-flex align-items-center gap-1">
-                                                    <i class="bi bi-check-circle-fill"></i> Chờ vận chuyển
+                                                    <i class="bi bi-truck"></i> Chờ giao hàng
                                                 </span>
                                             </c:when>
                                             <c:when test="${order.status.name() == 'Cancelled'}">
@@ -227,7 +231,6 @@
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center gap-3">
-                                                            <!-- Hiển thị Ảnh Sản Phẩm (Linh hoạt URL / Local Upload) -->
                                                             <c:choose>
                                                                 <c:when test="${not empty detail.product.thumbnailUrl && detail.product.thumbnailUrl.startsWith('http')}">
                                                                     <img src="${detail.product.thumbnailUrl}"
@@ -263,14 +266,17 @@
                                                 <td colspan="3" class="text-end fw-bold text-secondary">Tổng thanh toán:</td>
                                                 <td class="text-end text-danger fw-bold fs-5">
                                                     <fmt:formatNumber value="${order.totalAmount}" pattern="#,##0"/> VNĐ
+                                                    <c:if test="${order.paymentMethod == 'BANK_TRANSFER' && order.paymentStatus == 'Paid'}">
+                                                        <span class="text-muted small fw-normal d-block" style="font-size: 0.75rem;">(Đã chuyển khoản trước)</span>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </tfoot>
                                     </table>
                                 </div>
 
-                                <!-- NÚT HỦY ĐƠN HÀNG (Nếu đang Chờ duyệt - Pending) -->
-                                <c:if test="${order.status.name() == 'Pending'}">
+                                <!-- NÚT HỦY ĐƠN HÀNG -->
+                                <c:if test="${order.status.name() == 'Pending' && !(order.paymentMethod == 'BANK_TRANSFER' && order.paymentStatus == 'Paid')}">
                                     <div class="d-flex justify-content-end mt-3 pt-2 border-top">
                                         <a href="${pageContext.request.contextPath}/cancel-order?id=${order.orderID}"
                                            class="btn btn-outline-danger btn-sm btn-custom-outline px-3 py-2 d-flex align-items-center gap-1"

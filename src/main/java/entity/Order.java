@@ -41,6 +41,14 @@ public class Order {
     @Column(name = "ShippingAddress")
     private String shippingAddress;
 
+    // --- BỔ SUNG: Trường tên và số điện thoại người nhận riêng cho từng đơn hàng ---
+    @Column(name = "FullName", length = 150)
+    private String fullName;
+
+    @Column(name = "Phone", length = 20)
+    private String phone;
+    // --------------------------------------------------------------------------
+
     // --- BỔ SUNG: Thêm trường phương thức và trạng thái thanh toán ---
     @Column(name = "PaymentMethod")
     private String paymentMethod;
@@ -74,7 +82,6 @@ public class Order {
         return this.orderDate.format(formatter);
     }
 
-    // Tự ghi đè equals và hashCode dựa trên ID để tránh Lombok gây StackOverflow / Loop với Hibernate
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

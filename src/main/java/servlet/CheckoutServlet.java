@@ -5,6 +5,7 @@ import entity.Cart;
 import entity.Customer;
 import entity.Order;
 import entity.OrderDetail;
+import entity.Product;
 import service.EntityConnectivity;
 
 import jakarta.persistence.EntityManager;
@@ -20,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/checkout")
+@WebServlet(value = {"/checkout", "/cart-checkout"})
 public class CheckoutServlet extends HttpServlet {
 
     @Override
@@ -35,16 +36,19 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        // Lấy địa chỉ người dùng nhập từ modal ở trang giỏ hàng
+        // Lấy thông tin người nhận do khách tự nhập từ modal giỏ hàng
+        String fullName = request.getParameter("fullName");
+        String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         String paymentMethod = request.getParameter("paymentMethod");
+
         if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
-            paymentMethod = "COD"; // Mặc định là COD nếu không nhận được giá trị
+            paymentMethod = "COD";
         }
 
         String[] selectedCartIdsStr = request.getParameterValues("selectedCartIds");
 
-        if (address == null || address.trim().isEmpty() || selectedCartIdsStr == null || selectedCartIdsStr.length == 0) {
+        if (address == null || address.trim().isEmpty() || fullName == null || fullName.trim().isEmpty() || selectedCartIdsStr == null || selectedCartIdsStr.length == 0) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
@@ -60,7 +64,6 @@ public class CheckoutServlet extends HttpServlet {
         EntityTransaction tx = em.getTransaction();
 
         try {
-            // Bắt đầu Transaction để xử lý an toàn việc tạo Customer và Order
             tx.begin();
 
             // Tìm thông tin Customer tương ứng với Account
@@ -75,13 +78,13 @@ public class CheckoutServlet extends HttpServlet {
                 customer.setAccount(managedAccount);
                 customer.setFullName(user.getUsername());
                 em.persist(customer);
-                em.flush(); // Đồng bộ ID ngay lập tức
+                em.flush();
             } else {
                 customer = customers.get(0);
             }
 
             // Lấy danh sách sản phẩm được chọn trong giỏ hàng
-            List<Cart> cartList = em.createQuery("SELECT c FROM Cart c WHERE c.customer.customerID = :custId AND c.cartID IN :cartIds", Cart.class)
+            List<Cart> cartList = em.createQuery("SELECT c FROM Cart c WHERE c.customer.customerID = :custId and c.cartID IN :cartIds", Cart.class)
                     .setParameter("custId", customer.getCustomerID())
                     .setParameter("cartIds", selectedCartIds)
                     .getResultList();
@@ -99,18 +102,20 @@ public class CheckoutServlet extends HttpServlet {
                 totalAmount = totalAmount.add(itemTotal);
             }
 
-            // Tạo hóa đơn mới và lưu chính xác địa chỉ người dùng vừa nhập vào shippingAddress
+            // Tạo hóa đơn mới và lưu thông tin người nhận riêng biệt cho đơn hàng này
             Order order = new Order();
             order.setCustomer(customer);
+            order.setFullName(fullName.trim());   // Lưu tên người nhận cụ thể
+            order.setPhone(phone != null ? phone.trim() : ""); // Lưu số điện thoại cụ thể
+            order.setShippingAddress(address.trim()); // Lưu địa chỉ cụ thể
             order.setTotalAmount(totalAmount);
             order.setStatus(Order.OrderStatus.Pending);
-            order.setShippingAddress(address.trim()); // Đảm bảo gán địa chỉ động từ form gửi lên
             order.setPaymentMethod(paymentMethod);
             order.setPaymentStatus("Pending");
 
             em.persist(order);
 
-            // Lưu chi tiết đơn hàng & Xóa món đã mua khỏi giỏ
+            // Lưu chi tiết đơn hàng, trừ tồn kho & Xóa món đã mua khỏi giỏ
             for (Cart item : cartList) {
                 OrderDetail detail = new OrderDetail();
                 detail.setOrder(order);
@@ -119,15 +124,24 @@ public class CheckoutServlet extends HttpServlet {
                 detail.setUnitPrice(item.getProduct().getPrice());
 
                 em.persist(detail);
-                em.remove(item); // Xóa khỏi giỏ hàng
+
+                // Trừ số lượng tồn kho sản phẩm (dùng đúng stockQuantity theo Product.java)
+                Product product = item.getProduct();
+                if (product != null) {
+                    int newStock = product.getStockQuantity() - item.getQuantity();
+                    if (newStock < 0) newStock = 0;
+                    product.setStockQuantity(newStock);
+                    em.merge(product);
+                }
+
+                em.remove(item);
             }
 
-            // Hoàn tất giao dịch
             tx.commit();
 
             // Điều hướng theo phương thức thanh toán
             if ("BANK_TRANSFER".equals(paymentMethod)) {
-                response.sendRedirect(request.getContextPath() + "/qr-payment.jsp?orderId=" + order.getOrderID());
+                response.sendRedirect(request.getContextPath() + "/qr-payment?orderId=" + order.getOrderID());
             } else {
                 response.sendRedirect(request.getContextPath() + "/checkout-success.jsp");
             }

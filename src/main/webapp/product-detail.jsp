@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -129,6 +130,75 @@
             border-radius: 16px;
             padding: 1rem;
         }
+
+        /* --- STYLING CHO MODAL ĐĂNG NHẬP / ĐĂNG KÝ CAO CẤP --- */
+        .modal-content {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.5rem 1.75rem;
+        }
+
+        .modal-body {
+            padding: 2rem 1.75rem;
+        }
+
+        .auth-input-group {
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            overflow: hidden;
+            background-color: #f8fafc;
+            transition: all 0.25s ease;
+        }
+
+        .auth-input-group:focus-within {
+            border-color: #0d6efd;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
+        }
+
+        .auth-input-group .input-group-text {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding-left: 1.25rem;
+            padding-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .auth-input-group .form-control {
+            background: transparent;
+            border: none;
+            padding: 0.85rem 1rem 0.85rem 0;
+            font-size: 0.95rem;
+            color: #1e293b;
+            box-shadow: none !important;
+        }
+
+        .btn-auth-submit {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 0.85rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+            transition: all 0.25s ease;
+        }
+
+        .btn-auth-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(13, 110, 253, 0.35);
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -160,8 +230,9 @@
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/login" class="btn btn-outline-primary rounded-pill px-3 me-2">Đăng nhập</a>
-                    <a href="${pageContext.request.contextPath}/register" class="btn btn-primary rounded-pill px-3">Đăng ký</a>
+                    <!-- Nút kích hoạt Modal Đăng Nhập / Đăng ký qua Popup -->
+                    <button type="button" class="btn btn-outline-primary rounded-pill px-3 me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -195,7 +266,7 @@
                 </c:choose>
             </div>
 
-            <!-- Video Review Embed (Xử lý thông minh chống lỗi bản quyền / sai định dạng) -->
+            <!-- Video Review Embed -->
             <c:if test="${not empty product.videoUrl}">
                 <div class="mt-4 bg-white p-3 border rounded-4 shadow-sm">
                     <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
@@ -205,19 +276,17 @@
                         <iframe id="youtubeReviewFrame" src="" allowfullscreen title="Video Review"></iframe>
                     </div>
                 </div>
-                <!-- Truyền URL gốc từ Backend sang JS để tự động convert -->
                 <script>
                     var rawVideoUrl = "${product.videoUrl}";
                     function getEmbedUrl(url) {
                         if (!url) return "";
-                        // Nếu là dạng watch?v=ABC hoặc youtu.be/ABC -> chuyển thành embed/ABC
                         let videoId = "";
                         if (url.includes("watch?v=")) {
                             videoId = url.split("watch?v=")[1].split("&")[0];
                         } else if (url.includes("youtu.be/")) {
                             videoId = url.split("youtu.be/")[1].split("?")[0];
                         } else if (url.includes("embed/")) {
-                            return url; // Đã đúng định dạng embed
+                            return url;
                         }
                         return videoId ? "https://www.youtube.com/embed/" + videoId : url;
                     }
@@ -294,6 +363,7 @@
                         <div class="col-sm-6">
                             <button type="submit"
                                     formaction="${pageContext.request.contextPath}/cart/add"
+                                    onclick="return checkLoginBeforeSubmit(event, this);"
                                     class="btn btn-outline-primary btn-action-cart w-100 fs-6 d-flex align-items-center justify-content-center gap-2"
                                     ${product.stockQuantity <= 0 ? 'disabled' : ''}>
                                 <i class="bi bi-cart-plus fs-5"></i> Thêm vào giỏ
@@ -302,6 +372,7 @@
                         <div class="col-sm-6">
                             <button type="submit"
                                     formaction="${pageContext.request.contextPath}/buy-now"
+                                    onclick="return checkLoginBeforeSubmit(event, this);"
                                     class="btn btn-danger btn-action-buy text-white w-100 fs-6 d-flex align-items-center justify-content-center gap-2"
                                     ${product.stockQuantity <= 0 ? 'disabled' : ''}>
                                 <i class="bi bi-lightning-charge-fill"></i> Mua ngay
@@ -317,7 +388,7 @@
                             <i class="bi bi-truck text-primary fs-4"></i>
                             <div>
                                 <strong class="d-block small text-dark">Giao hàng nhanh</strong>
-                                <span class="text-muted" style="font-size: 0.75rem;">Toàn quốc từ 2 - 4 ngày</span>
+                                <span class="text-muted" style="font-size: 0.75rem;">Toàn quốc từ 2-4 ngày</span>
                             </div>
                         </div>
                     </div>
@@ -338,6 +409,155 @@
     </div>
 </div>
 
+<!-- ========================================================= -->
+<!-- 🔐 MODAL ĐĂNG NHẬP -->
+<!-- ========================================================= -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="loginModalLabel">
+                    <i class="bi bi-box-arrow-in-right text-primary fs-4"></i> Đăng Nhập Hệ Thống
+                </h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlertMessage" class="alert alert-success py-2 mb-3 small" style="display: none;"></div>
+
+                <!-- Vùng hiển thị lỗi đăng nhập sai -->
+                <div id="popupLoginError" class="alert alert-danger py-2 mb-3 small" style="display: none;"></div>
+
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Tên đăng nhập <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" name="username" required placeholder="Nhập tên đăng nhập của bạn">
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold text-secondary">Mật khẩu <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" name="password" required placeholder="Nhập mật khẩu">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mb-4 small">
+                        <a href="#" class="text-decoration-none text-primary fw-semibold" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-auth-submit">Đăng Nhập Ngay</button>
+                    </div>
+                </form>
+                <div class="text-center mt-4 small text-muted">
+                    Chưa có tài khoản thành viên?
+                    <a href="#" class="fw-bold text-primary text-decoration-none ms-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 📝 MODAL ĐĂNG KÝ -->
+<!-- ========================================================= -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 460px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="registerModalLabel">
+                    <i class="bi bi-person-plus-fill text-primary fs-4"></i> Tạo Tài Khoản Mới
+                </h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="popupRegisterError" class="alert alert-danger py-2 mb-3 small" style="display: none;"></div>
+
+                <form action="${pageContext.request.contextPath}/register" method="post">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Tên đăng nhập <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" name="username" required placeholder="Chọn tên đăng nhập của bạn">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Địa chỉ Email <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" name="email" required placeholder="name@gmail.com">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Mật khẩu <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" name="password" required placeholder="Tạo mật khẩu bảo mật">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold text-secondary">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                            <input type="password" class="form-control" name="confirmPassword" required placeholder="Nhập lại mật khẩu">
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-auth-submit">Đăng Ký Tài Khoản</button>
+                    </div>
+                </form>
+                <div class="text-center mt-4 small text-muted">
+                    Đã có sẵn tài khoản?
+                    <a href="#" class="fw-bold text-primary text-decoration-none ms-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 🔑 MODAL QUÊN MẬT KHẨU -->
+<!-- ========================================================= -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="forgotPasswordModalLabel">
+                    <i class="bi bi-key-fill text-primary fs-4"></i> Khôi Phục Mật Khẩu
+                </h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h6 class="fw-bold text-dark mb-1">Bạn quên mật khẩu?</h6>
+                <p class="text-muted small mb-4 px-2">Nhập email đã đăng ký của bạn để nhận mã xác thực OTP khôi phục mật khẩu.</p>
+
+                <form action="${pageContext.request.contextPath}/forgot-password" method="post" class="text-start">
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold text-secondary">Email tài khoản <span class="text-danger">*</span></label>
+                        <div class="input-group auth-input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" name="email" required placeholder="name@gmail.com">
+                        </div>
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-auth-submit d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-send-fill"></i> Gửi mã xác thực OTP
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="#" class="text-decoration-none text-secondary small fw-semibold d-inline-flex align-items-center gap-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="bi bi-arrow-left"></i> Quay lại đăng nhập
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- 🦶 FOOTER -->
 <footer class="bg-white border-top py-4 mt-5">
     <div class="container text-center text-muted small">
@@ -346,7 +566,59 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 🌟 XỬ LÝ SỰ KIỆN TRẠNG THÁI TỪ SESSION & JS -->
+<%
+    // Lấy dữ liệu đăng nhập từ Session
+    String loginError = (String) session.getAttribute("loginError");
+    String isOpenLogin = (String) session.getAttribute("isOpenLoginModal");
+
+    // Xóa session ngay lập tức để tránh lặp lại lỗi khi F5
+    if (isOpenLogin != null) {
+        session.removeAttribute("loginError");
+        session.removeAttribute("isOpenLoginModal");
+    }
+%>
+
 <script>
+    // Kiểm tra trạng thái đăng nhập bằng biến từ Session (JSP)
+    var isLoggedIn = ${not empty sessionScope.user ? 'true' : 'false'};
+
+    function checkLoginBeforeSubmit(event, button) {
+        if (!isLoggedIn) {
+            // Ngăn không cho form gửi đi
+            event.preventDefault();
+
+            // Bật Popup Đăng nhập lên ngay tại chỗ
+            var loginModalEl = document.getElementById('loginModal');
+            if (loginModalEl) {
+                var loginModal = new bootstrap.Modal(loginModalEl);
+                loginModal.show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    // Tự động bật popup và báo lỗi khi đăng nhập sai từ Server
+    document.addEventListener("DOMContentLoaded", function() {
+        var hasLoginError = "<%= isOpenLogin != null ? isOpenLogin : "" %>";
+        var loginErrorMessage = "<%= loginError != null ? loginError : "" %>";
+
+        if (hasLoginError === "true") {
+            var loginModalEl = document.getElementById('loginModal');
+            if (loginModalEl) {
+                var loginModal = new bootstrap.Modal(loginModalEl);
+                loginModal.show();
+            }
+            var loginErrorContainer = document.getElementById('popupLoginError');
+            if (loginErrorContainer) {
+                loginErrorContainer.innerText = loginErrorMessage;
+                loginErrorContainer.style.display = 'block';
+            }
+        }
+    });
+
     // Logic tăng / giảm số lượng linh hoạt
     const qtyInput = document.getElementById('quantityInput');
     const maxQty = parseInt("${product.stockQuantity}") || 1;
