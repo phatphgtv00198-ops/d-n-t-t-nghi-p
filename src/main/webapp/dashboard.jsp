@@ -121,8 +121,9 @@
 <!-- 🌐 NAVBAR TOP HEADER -->
 <nav class="navbar navbar-expand-lg navbar-top sticky-top">
     <div class="container-fluid px-4">
+        <!-- Đã sửa thành Cửa Hàng Điện Máy -->
         <a class="navbar-brand fw-bold text-primary fs-5 d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/dashboard">
-            <i class="bi bi-shop-window fs-4"></i> Bán Đồ Gia Dụng <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7 rounded-pill ms-1">Admin</span>
+            <i class="bi bi-shop-window fs-4"></i> Cửa Hàng Điện Máy <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7 rounded-pill ms-1">Admin</span>
         </a>
 
         <div class="d-flex align-items-center gap-3">
@@ -240,7 +241,8 @@
                     <i class="bi bi-box-seam"></i>
                 </div>
                 <h6 class="fw-bold text-dark mb-1">Quản lý Sản phẩm</h6>
-                <p class="text-muted small mb-0">Thêm mới, cập nhật giá và số lượng kho sản phẩm gia dụng.</p>
+                <!-- Đã sửa thành sản phẩm điện máy -->
+                <p class="text-muted small mb-0">Thêm mới, cập nhật giá và số lượng kho sản phẩm điện máy.</p>
                 <span class="badge bg-light text-secondary border mt-3">Nhân viên & Manager</span>
             </a>
         </div>

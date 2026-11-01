@@ -86,7 +86,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/manager/accounts" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i> Danh sách tài khoản
@@ -107,7 +107,7 @@
                     </div>
                     <div>
                         <h4 class="fw-bold text-dark mb-0">${isEdit ? 'Chỉnh Sửa Tài Khoản' : 'Thêm Tài Khoản Mới'}</h4>
-                        <small class="text-muted">${isEdit ? 'Cập nhật thông tin phân quyền & mật khẩu' : 'Tạo mới tài khoản người dùng hệ thống'}</small>
+                        <small class="text-muted">${isEdit ? 'Cập nhật thông tin phân quyền & mật khẩu' : 'Tạo mới tài khoản người dùng hệ thống điện máy'}</small>
                     </div>
                 </div>
             </div>
@@ -218,15 +218,15 @@
             if (role === 'Manager') {
                 badge.className = 'badge bg-danger';
                 badge.innerText = 'Manager';
-                desc.innerText = 'Toàn quyền quản lý hệ thống, báo cáo và tài khoản.';
+                desc.innerText = 'Toàn quyền quản lý hệ thống điện máy, báo cáo và tài khoản.';
             } else if (role === 'Staff') {
                 badge.className = 'badge bg-primary';
                 badge.innerText = 'Staff';
-                desc.innerText = 'Quản lý kho, đơn hàng và xử lý yêu cầu khách hàng.';
+                desc.innerText = 'Quản lý kho điện máy, đơn hàng và xử lý yêu cầu khách hàng.';
             } else {
                 badge.className = 'badge bg-success';
                 badge.innerText = 'Customer';
-                desc.innerText = 'Tài khoản người dùng mua sắm dịch vụ.';
+                desc.innerText = 'Tài khoản người dùng mua sắm thiết bị điện máy.';
             }
         }
 

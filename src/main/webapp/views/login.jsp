@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đổi Mật Khẩu & Hồ Sơ | Admin</title>
+    <title>Đổi Mật Khẩu & Hồ Sơ | Điện Máy Admin</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -75,7 +75,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
@@ -109,7 +109,7 @@
                         <i class="bi bi-person"></i>
                     </div>
                     <h5 class="fw-bold text-dark mb-1">${user.fullName != null ? user.fullName : 'Admin User'}</h5>
-                    <p class="text-muted small mb-2">${user.email != null ? user.email : 'admin@giadung.com'}</p>
+                    <p class="text-muted small mb-2">${user.email != null ? user.email : 'admin@dienmay.com'}</p>
                     <div>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
                             <i class="bi bi-shield-check me-1"></i>${user.role != null ? user.role : 'Quản trị viên'}
@@ -144,7 +144,7 @@
                         </div>
                         <div>
                             <h4 class="fw-bold text-dark mb-1">Đổi Mật Khẩu</h4>
-                            <small class="text-muted">Cập nhật mật khẩu định kỳ để bảo mật tài khoản</small>
+                            <small class="text-muted">Cập nhật mật khẩu định kỳ để bảo mật tài khoản hệ thống điện máy</small>
                         </div>
                     </div>
 

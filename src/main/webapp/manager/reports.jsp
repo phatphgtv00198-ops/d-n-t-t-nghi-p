@@ -70,7 +70,7 @@
                 <div class="bg-success text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <div class="d-flex align-items-center gap-3">
                 <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-outline-light btn-sm px-3 rounded-pill">
@@ -88,7 +88,7 @@
                 <h3 class="fw-bold text-dark mb-1">
                     <i class="bi bi-graph-up-arrow text-success me-2"></i> Báo Cáo Doanh Thu
                 </h3>
-                <p class="text-muted small mb-0">Theo dõi tăng trưởng doanh số và hiệu suất bán hàng thực tế</p>
+                <p class="text-muted small mb-0">Theo dõi tăng trưởng doanh số và hiệu suất bán hàng điện máy thực tế</p>
             </div>
 
             <form action="${pageContext.request.contextPath}/manager/reports" method="GET" class="d-flex align-items-center gap-2 bg-white p-2 rounded-4 shadow-sm border">
@@ -147,7 +147,7 @@
                             <i class="bi bi-box-seam-fill"></i>
                         </div>
                         <div>
-                            <span class="text-muted small fw-semibold text-uppercase tracking-wide">Sản phẩm đã bán</span>
+                            <span class="text-muted small fw-semibold text-uppercase tracking-wide">Thiết bị điện máy đã bán</span>
                             <h3 class="fw-bold text-dark mt-1 mb-0">
                                 ${not empty soldProducts ? soldProducts : 0} <span class="fs-6 fw-normal text-muted">SP</span>
                             </h3>
@@ -165,7 +165,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h5 class="fw-bold text-dark mb-1">
-                                <i class="bi bi-bar-chart-line text-primary me-2"></i>Biểu đồ tăng trưởng
+                                <i class="bi bi-bar-chart-line text-primary me-2"></i>Biểu đồ tăng trưởng doanh thu điện máy
                             </h5>
                             <small class="text-muted">Biến động doanh thu qua các tháng trong năm</small>
                         </div>
@@ -184,7 +184,7 @@
                 <div class="card card-custom p-4 bg-white h-100">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="fw-bold text-dark mb-0">
-                            <i class="bi bi-trophy-fill text-warning me-2"></i>Top Bán Chạy
+                            <i class="bi bi-trophy-fill text-warning me-2"></i>Top Điện Máy Bán Chạy
                         </h5>
                         <small class="text-muted">Top 5</small>
                     </div>

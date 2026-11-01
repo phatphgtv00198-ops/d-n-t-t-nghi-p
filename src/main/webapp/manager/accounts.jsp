@@ -79,7 +79,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
@@ -139,7 +139,7 @@
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 mb-4 p-3" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-check-circle-fill fs-5 me-2"></i>
-                    <div><strong>Tạo tài khoản thành công!</strong> Tài khoản <strong><c:out value="${param.user}"/></strong> đã được lưu vào hệ thống.</div>
+                    <div><strong>Tạo tài khoản thành công!</strong> Tài khoản <strong><c:out value="${param.user}"/></strong> đã được lưu vào hệ thống điện máy.</div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -160,7 +160,7 @@
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                 <div>
                     <h4 class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock text-danger me-2"></i>Quản Lý Tài Khoản</h4>
-                    <small class="text-muted">Danh sách tài khoản và phân quyền người dùng</small>
+                    <small class="text-muted">Danh sách tài khoản và phân quyền người dùng hệ thống điện máy</small>
                 </div>
                 <a href="${pageContext.request.contextPath}/manager/account-add" class="btn btn-primary rounded-pill px-4 shadow-sm fw-semibold">
                     <i class="bi bi-person-plus me-1"></i> Thêm tài khoản

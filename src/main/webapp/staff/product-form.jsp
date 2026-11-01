@@ -81,7 +81,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/staff/products" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
@@ -99,7 +99,7 @@
                 </div>
                 <div>
                     <h4 class="fw-bold text-dark mb-1">${pageTitle}</h4>
-                    <small class="text-muted">Nhập chi tiết thông tin sản phẩm để lưu vào hệ thống</small>
+                    <small class="text-muted">Nhập chi tiết thông tin thiết bị điện máy để lưu vào hệ thống</small>
                 </div>
             </div>
 
@@ -121,8 +121,8 @@
                     <div class="row g-3">
                         <!-- Tên sản phẩm -->
                         <div class="col-md-8">
-                            <label class="form-label fw-semibold">Tên sản phẩm <span class="text-danger">*</span></label>
-                            <input type="text" name="productName" value="${product.productName}" class="form-control" required placeholder="Ví dụ: Nồi chiên không dầu Lock&Lock...">
+                            <label class="form-label fw-semibold">Tên sản phẩm điện máy <span class="text-danger">*</span></label>
+                            <input type="text" name="productName" value="${product.productName}" class="form-control" required placeholder="Ví dụ: Tivi Samsung 4K, Tủ lạnh Inverter...">
                         </div>
 
                         <!-- Danh mục -->
@@ -207,8 +207,8 @@
                 <!-- KHỐI 4: MÔ TẢ SẢN PHẨM -->
                 <div class="mb-4">
                     <div class="section-title"><i class="bi bi-file-earmark-text me-1"></i> Chi tiết mô tả</div>
-                    <label class="form-label fw-semibold">Mô tả sản phẩm</label>
-                    <textarea name="description" class="form-control" rows="4" placeholder="Nhập mô tả chi tiết về tính năng, chất liệu, xuất xứ sản phẩm...">${product.description}</textarea>
+                    <label class="form-label fw-semibold">Mô tả sản phẩm điện máy</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Nhập mô tả chi tiết về tính năng, công suất, bảo hành, xuất xứ thiết bị...">${product.description}</textarea>
                 </div>
 
                 <!-- NÚT BẤM THAO TÁC -->

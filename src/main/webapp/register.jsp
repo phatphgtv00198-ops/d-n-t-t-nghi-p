@@ -1,10 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Tài Khoản | Gia Dụng Store</title>
+    <title>Đăng Ký Tài Khoản | Cửa Hàng Điện Máy</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -136,7 +137,7 @@
                             <i class="bi bi-person-plus-fill"></i>
                         </div>
                         <h4 class="fw-bold text-dark mb-1">Tạo Tài Khoản Mới</h4>
-                        <p class="text-muted small mb-0">Đăng ký để trải nghiệm mua sắm tại Gia Dụng Store</p>
+                        <p class="text-muted small mb-0">Đăng ký để trải nghiệm mua sắm tại Cửa Hàng Điện Máy</p>
                     </div>
 
                     <%-- Thông báo lỗi từ RegisterServlet (Giữ nguyên Java Scriptlet) --%>
@@ -159,6 +160,17 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-white text-muted"><i class="bi bi-person"></i></span>
                                 <input type="text" class="form-control" id="username" name="username" required placeholder="Nhập tên đăng nhập">
+                            </div>
+                        </div>
+
+                        <!-- Email (Dùng để khôi phục mật khẩu) -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label small fw-semibold text-secondary">
+                                Địa chỉ Email <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white text-muted"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" required placeholder="nhapemail@gmail.com">
                             </div>
                         </div>
 
@@ -233,7 +245,7 @@
 
             <!-- Footer bản quyền mỏng -->
             <div class="text-center text-muted small mt-4">
-                &copy; 2026 Gia Dụng Store. Tất cả quyền được bảo lưu.
+                &copy; 2026 Cửa Hàng Điện Máy. Tất cả quyền được bảo lưu.
             </div>
 
         </div>

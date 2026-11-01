@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch Sử Đơn Hàng | Gia Dụng Store</title>
+    <title>Lịch Sử Đơn Hàng | Cửa Hàng Điện Máy</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -98,7 +98,7 @@
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top py-2 shadow-sm mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary fs-4 d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/home">
-                <i class="bi bi-shop fs-3"></i> Gia Dụng Store
+                <i class="bi bi-shop fs-3"></i> Cửa Hàng Điện Máy
             </a>
 
             <div class="d-flex align-items-center gap-2">
@@ -130,7 +130,7 @@
             <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
                 <i class="bi bi-receipt-cutoff fs-1 text-muted mb-3 d-block"></i>
                 <h5 class="fw-bold text-dark mb-2">Chưa có đơn hàng nào</h5>
-                <p class="text-muted small mb-4">Bạn chưa thực hiện giao dịch mua hàng nào tại Cửa Hàng Gia Dụng.</p>
+                <p class="text-muted small mb-4">Bạn chưa thực hiện giao dịch mua hàng nào tại Cửa Hàng Điện Máy.</p>
                 <a href="${pageContext.request.contextPath}/home" class="btn btn-primary btn-custom-outline px-4 py-2">
                     <i class="bi bi-cart-plus me-1"></i> Khám phá sản phẩm ngay
                 </a>
@@ -181,7 +181,7 @@
                                             </c:when>
                                             <c:when test="${order.status.name() == 'Paid'}">
                                                 <span class="badge badge-status bg-success-subtle text-success border border-success-subtle d-flex align-items-center gap-1">
-                                                    <i class="bi bi-check-circle-fill"></i> Đã thanh toán
+                                                    <i class="bi bi-check-circle-fill"></i> Chờ vận chuyển
                                                 </span>
                                             </c:when>
                                             <c:when test="${order.status.name() == 'Cancelled'}">
@@ -293,7 +293,7 @@
     <!-- 🦶 FOOTER -->
     <footer class="bg-white border-top py-4 mt-auto">
         <div class="container text-center text-muted small">
-            <p class="mb-1">&copy; 2026 Cửa Hàng Gia Dụng. Tất cả quyền được bảo lưu.</p>
+            <p class="mb-1">&copy; 2026 Cửa Hàng Điện Máy. Tất cả quyền được bảo lưu.</p>
         </div>
     </footer>
 

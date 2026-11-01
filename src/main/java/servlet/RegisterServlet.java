@@ -96,7 +96,7 @@ public class RegisterServlet extends HttpServlet {
             // C. Xác nhận lưu toàn bộ dữ liệu vào Database
             tx.commit();
 
-            // 5. Đăng ký thành công -> Chuyển hướng sang trang đăng nhập
+            // 5. Đăng ký thành công -> Chuyển hướng sang trang đăng nhập độc lập có sẵn bố cục thương hiệu
             response.sendRedirect(request.getContextPath() + "/login?registered=true");
 
         } catch (Exception e) {

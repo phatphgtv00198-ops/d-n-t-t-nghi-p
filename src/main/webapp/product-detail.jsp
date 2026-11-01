@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${product.productName} - Chi Tiết Sản Phẩm | Gia Dụng Store</title>
+    <title>${product.productName} - Chi Tiết Sản Phẩm | Cửa Hàng Điện Máy</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -137,7 +137,7 @@
 <nav class="navbar navbar-expand-lg navbar-custom sticky-top py-2 shadow-sm">
     <div class="container">
         <a class="navbar-brand fw-bold text-primary fs-4 d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/home">
-            <i class="bi bi-shop fs-3"></i> Gia Dụng Store
+            <i class="bi bi-shop fs-3"></i> Cửa Hàng Điện Máy
         </a>
 
         <div class="d-flex align-items-center gap-2">
@@ -174,7 +174,7 @@
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb mb-0 small">
             <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/home"><i class="bi bi-house"></i> Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/home#productList">${product.category != null ? product.category.categoryName : 'Đồ gia dụng'}</a></li>
+            <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/home#productList">${product.category != null ? product.category.categoryName : 'Thiết bị điện máy'}</a></li>
             <li class="breadcrumb-item active text-truncate" style="max-width: 250px;" aria-current="page">${product.productName}</li>
         </ol>
     </nav>
@@ -195,16 +195,34 @@
                 </c:choose>
             </div>
 
-            <!-- Video Review Embed (Nếu có) -->
+            <!-- Video Review Embed (Xử lý thông minh chống lỗi bản quyền / sai định dạng) -->
             <c:if test="${not empty product.videoUrl}">
                 <div class="mt-4 bg-white p-3 border rounded-4 shadow-sm">
                     <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
                         <i class="bi bi-youtube text-danger fs-5"></i> Video Đánh Giá Sản Phẩm
                     </h6>
-                    <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
-                        <iframe src="${product.videoUrl}" allowfullscreen title="Video Review"></iframe>
+                    <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-light">
+                        <iframe id="youtubeReviewFrame" src="" allowfullscreen title="Video Review"></iframe>
                     </div>
                 </div>
+                <!-- Truyền URL gốc từ Backend sang JS để tự động convert -->
+                <script>
+                    var rawVideoUrl = "${product.videoUrl}";
+                    function getEmbedUrl(url) {
+                        if (!url) return "";
+                        // Nếu là dạng watch?v=ABC hoặc youtu.be/ABC -> chuyển thành embed/ABC
+                        let videoId = "";
+                        if (url.includes("watch?v=")) {
+                            videoId = url.split("watch?v=")[1].split("&")[0];
+                        } else if (url.includes("youtu.be/")) {
+                            videoId = url.split("youtu.be/")[1].split("?")[0];
+                        } else if (url.includes("embed/")) {
+                            return url; // Đã đúng định dạng embed
+                        }
+                        return videoId ? "https://www.youtube.com/embed/" + videoId : url;
+                    }
+                    document.getElementById('youtubeReviewFrame').src = getEmbedUrl(rawVideoUrl);
+                </script>
             </c:if>
         </div>
 
@@ -214,7 +232,7 @@
 
                 <!-- Category Badge -->
                 <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold mb-2">
-                    <i class="bi bi-tag-fill me-1"></i> ${product.category != null ? product.category.categoryName : 'Đồ gia dụng'}
+                    <i class="bi bi-tag-fill me-1"></i> ${product.category != null ? product.category.categoryName : 'Thiết bị điện máy'}
                 </span>
 
                 <!-- Tên Sản Phẩm -->
@@ -253,7 +271,7 @@
 
                 <hr class="my-4 opacity-25">
 
-                <!-- 🛒 FORM THÊM MUA SẮM (Giữ nguyên Name & Action Logic) -->
+                <!-- 🛒 FORM THÊM MUA SẮM -->
                 <form id="productForm" method="post" class="mt-4">
                     <input type="hidden" name="productId" value="${product.productID}">
                     <input type="hidden" name="id" value="${product.productID}">
@@ -323,7 +341,7 @@
 <!-- 🦶 FOOTER -->
 <footer class="bg-white border-top py-4 mt-5">
     <div class="container text-center text-muted small">
-        <p class="mb-1">&copy; 2026 Cửa Hàng Gia Dụng. Tất cả quyền được bảo lưu.</p>
+        <p class="mb-1">&copy; 2026 Cửa Hàng Điện Máy. Tất cả quyền được bảo lưu.</p>
     </div>
 </footer>
 

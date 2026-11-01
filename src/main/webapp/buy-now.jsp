@@ -99,6 +99,88 @@
             position: sticky;
             top: 20px;
         }
+
+        /* --- STYLING CHO MODAL ĐĂNG NHẬP / ĐĂNG KÝ / QUÊN MẬT KHẨU --- */
+        .modal-content {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.5rem 1.75rem;
+        }
+
+        .modal-body {
+            padding: 2rem 1.75rem;
+        }
+
+        .auth-input-group {
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            overflow: hidden;
+            background-color: #f8fafc;
+            transition: all 0.25s ease;
+        }
+
+        .auth-input-group:focus-within {
+            border-color: #0d6efd;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
+        }
+
+        .auth-input-group .input-group-text {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding-left: 1.25rem;
+            padding-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .auth-input-group .form-control {
+            background: transparent;
+            border: none;
+            padding: 0.85rem 1rem 0.85rem 0;
+            font-size: 0.95rem;
+            color: #1e293b;
+            box-shadow: none !important;
+        }
+
+        .btn-auth-submit {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 0.85rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-auth-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(13, 110, 253, 0.35);
+            color: #ffffff;
+        }
+
+        .modal-brand-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 1rem;
+        }
     </style>
 </head>
 <body>
@@ -107,11 +189,26 @@
     <nav class="navbar navbar-expand-lg navbar-custom py-3 mb-4 shadow-sm">
         <div class="container" style="max-width: 1100px;">
             <a class="navbar-brand fw-bold text-primary fs-5 d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/home">
-                <i class="bi bi-shop fs-4"></i> Cửa Hàng Gia Dụng
+                <i class="bi bi-shop fs-4"></i> Cửa Hàng Điện Máy
             </a>
-            <div class="d-flex align-items-center gap-2 text-secondary small">
-                <i class="bi bi-person-circle fs-5"></i>
-                <span>Tài khoản: <strong class="text-dark">${sessionScope.user.username != null ? sessionScope.user.username : 'Khách hàng'}</strong></span>
+            <div class="d-flex align-items-center gap-2">
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <div class="text-secondary small d-flex align-items-center gap-2">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span>Tài khoản: <strong class="text-dark">${sessionScope.user.username}</strong></span>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <!-- Nút kích hoạt Modal Đăng Nhập / Đăng Ký -->
+                        <button type="button" class="btn btn-outline-primary btn-sm px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="bi bi-person me-1"></i> Đăng nhập
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            Đăng ký
+                        </button>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </nav>
@@ -165,28 +262,50 @@
                     </div>
                 </div>
 
-                <!-- 2. ĐỊA CHỈ NHẬN HÀNG -->
+                <!-- 2. THÔNG TIN NHẬN HÀNG -->
                 <div class="card card-custom p-4 mb-4">
                     <div class="section-header">
-                        <i class="bi bi-geo-alt-fill text-primary"></i> 2. Địa chỉ nhận hàng <span class="text-danger">*</span>
+                        <i class="bi bi-geo-alt-fill text-primary"></i> 2. Thông tin nhận hàng <span class="text-danger">*</span>
                     </div>
 
+                    <div class="row g-3 mb-3">
+                        <!-- Họ và tên người nhận -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Họ và tên người nhận <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input type="text" id="fullNameInput" class="form-control" placeholder="Nhập họ và tên..." value="${customer.fullName}">
+                            </div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Số điện thoại <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-phone"></i></span>
+                                <input type="tel" id="phoneInput" class="form-control" placeholder="Nhập số điện thoại..." value="${customer.phone}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Địa chỉ chi tiết -->
                     <div class="mb-2">
-                        <textarea id="addressInput" class="form-control" rows="3"
-                                  placeholder="Nhập địa chỉ nhận hàng chi tiết (Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành)...">${customer.address}</textarea>
+                        <label class="form-label small fw-semibold text-secondary">Địa chỉ giao hàng chi tiết <span class="text-danger">*</span></label>
+                        <textarea id="addressInput" class="form-control" rows="2"
+                                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện...">${customer.address}</textarea>
 
                         <div class="d-flex align-items-center gap-1 text-muted small mt-2">
                             <i class="bi bi-info-circle"></i>
-                            <span>Vui lòng ghi rõ tên đường, phường/xã để Shipper giao tận nơi.</span>
+                            <span>Vui lòng điền đầy đủ thông tin để Shipper liên hệ giao hàng thuận lợi.</span>
                         </div>
 
-                        <div id="addressError" class="alert alert-danger border-0 p-2 mt-2 small fw-semibold d-none">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i> Vui lòng nhập địa chỉ nhận hàng hợp lệ!
+                        <div id="checkoutError" class="alert alert-danger border-0 p-2 mt-2 small fw-semibold d-none">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> <span id="errorMsgText">Vui lòng điền đầy đủ thông tin!</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. PHƯƠNG THỨC THANH TOÁN (ĐÃ MỞ KHÓA QR) -->
+                <!-- 3. PHƯƠNG THỨC THANH TOÁN -->
                 <div class="card card-custom p-4 mb-4">
                     <div class="section-header">
                         <i class="bi bi-credit-card-2-front-fill text-primary"></i> 3. Phương thức thanh toán
@@ -212,6 +331,28 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- KHUNG HIỂN THỊ MÃ QR NGÂN HÀNG (Ẩn mặc định, tự hiện khi chọn Chuyển khoản) -->
+                    <div id="qrCodeContainer" class="card border-primary bg-light p-3 mt-3 d-none">
+                        <div class="text-center">
+                            <h6 class="fw-bold text-primary mb-2"><i class="bi bi-qr-code-scan me-1"></i> Quét mã QR để thanh toán</h6>
+                            <p class="text-muted small mb-2">Sử dụng App Ngân hàng hoặc Ví điện tử bất kỳ để quét mã</p>
+
+                            <!-- Ảnh QR gọi trực tiếp từ VietQR API -->
+                            <div class="bg-white p-2 d-inline-block rounded-3 border shadow-sm">
+                                <img id="vietQrImg" src="" alt="Mã QR Chuyển Khoản" style="width: 200px; height: 200px; object-fit: contain;">
+                            </div>
+
+                            <div class="mt-2 text-start small bg-white p-2 rounded border">
+                                <div><strong>Ngân hàng:</strong> MB Bank</div>
+                                <div><strong>Chủ tài khoản:</strong> PHAM HOANG GIA PHAT</div>
+                                <div><strong>Số tài khoản:</strong> <span class="text-primary fw-bold">0933099356</span></div>
+                                <div><strong>Số tiền:</strong> <span id="qrAmountText" class="text-danger fw-bold">0 VNĐ</span></div>
+                                <div><strong>Nội dung:</strong> <span class="text-dark fw-semibold">Thanh toan don hang Dien May</span></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -242,12 +383,14 @@
                     <form action="${pageContext.request.contextPath}/buy-now" method="post" id="finalOrderForm">
                         <input type="hidden" name="productId" value="${product.productID}">
                         <input type="hidden" name="quantity" value="${quantity}">
+                        <input type="hidden" name="fullName" id="hiddenFullName">
+                        <input type="hidden" name="phone" id="hiddenPhone">
                         <input type="hidden" name="address" id="hiddenAddress">
                         <input type="hidden" name="paymentMethod" id="hiddenPaymentMethod" value="COD">
                         <input type="hidden" name="action" value="confirmOrder">
 
                         <button type="button" class="btn btn-success btn-checkout w-100 text-white shadow-sm mb-3" onclick="handleCheckoutClick()">
-                            <i class="bi bi-shield-check me-1"></i> Thanh Toán Ngay
+                            <i class="bi bi-shield-check me-1"></i> Đặt Hàng Ngay
                         </button>
                     </form>
 
@@ -260,7 +403,7 @@
         </div>
     </div>
 
-    <!-- MODAL POP-UP XÁC NHẬN THANH TOÁN -->
+    <!-- MODAL POP-UP XÁC NHẬN ĐẶT HÀNG -->
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
@@ -275,11 +418,12 @@
                         <i class="bi bi-cart-check-fill fs-1"></i>
                     </div>
                     <h5 class="fw-bold text-dark mb-1">Xác nhận hoàn tất đơn hàng?</h5>
-                    <p class="text-muted small mb-3">Vui lòng kiểm tra lại địa chỉ giao hàng trước khi đồng ý.</p>
+                    <p class="text-muted small mb-3">Vui lòng kiểm tra lại thông tin nhận hàng trước khi đồng ý.</p>
 
                     <div class="text-start bg-light p-3 rounded-3 border small">
                         <div class="mb-2"><strong>Sản phẩm:</strong> <span class="text-dark">${product.productName}</span></div>
                         <div class="mb-2"><strong>Số lượng:</strong> <span class="badge bg-secondary">${quantity}</span></div>
+                        <div class="mb-2"><strong>Người nhận:</strong> <span id="modalFullNameText" class="text-dark fw-semibold"></span></div>
                         <div class="mb-2"><strong>Địa chỉ giao:</strong> <span id="modalAddressText" class="text-primary fw-semibold"></span></div>
                         <div class="mb-2"><strong>Thanh toán:</strong> <span id="modalPaymentText" class="text-success fw-semibold">Thanh toán COD</span></div>
                         <div class="pt-2 border-top"><strong>Tổng thanh toán:</strong> <span class="text-danger fw-bold fs-6"><fmt:formatNumber value="${totalAmount}" pattern="#,##0"/> VNĐ</span></div>
@@ -295,34 +439,236 @@
         </div>
     </div>
 
+    <!-- ========================================================= -->
+    <!-- 🔐 1. MODAL ĐĂNG NHẬP -->
+    <!-- ========================================================= -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="loginModalLabel">
+                        <i class="bi bi-box-arrow-in-right text-primary fs-4"></i> Đăng Nhập Hệ Thống
+                    </h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="${pageContext.request.contextPath}/login" method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Tên đăng nhập <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" name="username" required placeholder="Nhập tên đăng nhập của bạn">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-secondary">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" name="password" required placeholder="Nhập mật khẩu">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-4 small">
+                            <a href="#" class="text-decoration-none text-primary fw-semibold" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                                Quên mật khẩu?
+                            </a>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-auth-submit">Đăng Nhập Ngay</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-4 small text-muted">
+                        Chưa có tài khoản thành viên?
+                        <a href="#" class="fw-bold text-primary text-decoration-none ms-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 📝 2. MODAL ĐĂNG KÝ -->
+    <!-- ========================================================= -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 460px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="registerModalLabel">
+                        <i class="bi bi-person-plus-fill text-primary fs-4"></i> Tạo Tài Khoản Mới
+                    </h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="${pageContext.request.contextPath}/register" method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Tên đăng nhập <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" name="username" required placeholder="Chọn tên đăng nhập của bạn">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Địa chỉ Email <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" name="email" required placeholder="name@gmail.com">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" name="password" required placeholder="Tạo mật khẩu bảo mật">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                                <input type="password" class="form-control" name="confirmPassword" required placeholder="Nhập lại mật khẩu">
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-auth-submit">Đăng Ký Tài Khoản</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-4 small text-muted">
+                        Đã có sẵn tài khoản?
+                        <a href="#" class="fw-bold text-primary text-decoration-none ms-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 🔑 3. MODAL QUÊN MẬT KHẨU -->
+    <!-- ========================================================= -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="forgotPasswordModalLabel">
+                        <i class="bi bi-key-fill text-primary fs-4"></i> Khôi Phục Mật Khẩu
+                    </h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="modal-brand-icon">
+                        <i class="bi bi-envelope-at-fill"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-1">Bạn quên mật khẩu?</h6>
+                    <p class="text-muted small mb-4 px-2">Nhập email đã đăng ký của bạn để nhận mã xác thực OTP khôi phục mật khẩu.</p>
+
+                    <form action="${pageContext.request.contextPath}/forgot-password" method="post" class="text-start">
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary">Email tài khoản <span class="text-danger">*</span></label>
+                            <div class="input-group auth-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" name="email" required placeholder="name@gmail.com">
+                            </div>
+                        </div>
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-auth-submit d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-send-fill"></i> Gửi mã xác thực OTP
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none text-secondary small fw-semibold d-inline-flex align-items-center gap-1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="bi bi-arrow-left"></i> Quay lại đăng nhập
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Lắng nghe sự kiện thay đổi phương thức thanh toán để hiện/ẩn QR
+        document.querySelectorAll('input[name="paymentOptionRadio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                toggleQrBox(this.value);
+            });
+        });
+
+        function toggleQrBox(paymentMethod) {
+            let qrContainer = document.getElementById('qrCodeContainer');
+            let qrImg = document.getElementById('vietQrImg');
+            let qrAmountText = document.getElementById('qrAmountText');
+
+            if (paymentMethod === 'BANK_TRANSFER') {
+                qrContainer.classList.remove('d-none');
+
+                // Lấy tổng số tiền từ backend chuyển xuống
+                let rawAmount = ${totalAmount};
+
+                // Hiển thị số tiền định dạng VNĐ
+                qrAmountText.innerText = new Intl.NumberFormat('vi-VN').format(rawAmount) + ' VNĐ';
+
+                // Cấu hình thông tin ngân hàng của bạn
+                let bankId = "MB";                    // Mã ngân hàng (MB, VCB, TCB,...)
+                let accountNo = "0933099356";          // Số tài khoản của bạn
+                let template = "compact2";            // Kiểu hiển thị QR
+                let addInfo = "Thanh toan don hang Dien May"; // Nội dung
+
+                // Tạo URL VietQR tự động sinh số tiền
+                let qrUrl = `https://img.vietqr.io/image/\${bankId}-\${accountNo}-\${template}.png?amount=\${rawAmount}&addInfo=\${encodeURIComponent(addInfo)}`;
+                qrImg.src = qrUrl;
+            } else {
+                qrContainer.classList.add('d-none');
+            }
+        }
+
         function handleCheckoutClick() {
+            let fullNameInput = document.getElementById('fullNameInput');
+            let phoneInput = document.getElementById('phoneInput');
             let addressInput = document.getElementById('addressInput');
+
+            let fullNameVal = fullNameInput.value.trim();
+            let phoneVal = phoneInput.value.trim();
             let addressVal = addressInput.value.trim();
 
-            if (addressVal === '') {
-                showError('⚠️ Vui lòng nhập địa chỉ nhận hàng!');
+            // 1. Kiểm tra Họ tên
+            if (fullNameVal === '') {
+                showError('Vui lòng nhập họ và tên người nhận!', fullNameInput);
                 return;
             }
 
-            if (addressVal.length < 10) {
-                showError('⚠️ Địa chỉ quá ngắn! Vui lòng nhập chi tiết số nhà, tên đường, phường/xã, quận/huyện.');
+            // 2. Kiểm tra Số điện thoại (10-11 chữ số)
+            let phoneRegex = /^[0-9]{10,11}$/;
+            if (!phoneRegex.test(phoneVal)) {
+                showError('Số điện thoại không hợp lệ (phải gồm 10-11 chữ số)!', phoneInput);
                 return;
             }
 
-            let errorDiv = document.getElementById('addressError');
+            // 3. Kiểm tra Địa chỉ
+            if (addressVal === '' || addressVal.length < 10) {
+                showError('⚠️ Vui lòng nhập địa chỉ chi tiết (Số nhà, tên đường, phường/xã) để giao hàng chính xác!', addressInput);
+                return;
+            }
+
+            // Ẩn thông báo lỗi nếu dữ liệu hợp lệ
+            let errorDiv = document.getElementById('checkoutError');
             if (errorDiv) errorDiv.classList.add('d-none');
+            fullNameInput.classList.remove('is-invalid');
+            phoneInput.classList.remove('is-invalid');
             addressInput.classList.remove('is-invalid');
 
             // Lấy phương thức thanh toán đang chọn
             let selectedPayment = document.querySelector('input[name="paymentOptionRadio"]:checked');
             let paymentVal = selectedPayment ? selectedPayment.value : 'COD';
 
+            // Gán dữ liệu vào các thẻ input ẩn của form
+            document.getElementById('hiddenFullName').value = fullNameVal;
+            document.getElementById('hiddenPhone').value = phoneVal;
             document.getElementById('hiddenAddress').value = addressVal;
             document.getElementById('hiddenPaymentMethod').value = paymentVal;
 
+            // Đưa thông tin lên Modal xác nhận
+            document.getElementById('modalFullNameText').innerText = fullNameVal + ' (' + phoneVal + ')';
             document.getElementById('modalAddressText').innerText = addressVal;
             document.getElementById('modalPaymentText').innerText = (paymentVal === 'BANK_TRANSFER') ? 'Chuyển khoản QR / Ví' : 'Thanh toán COD';
 
@@ -330,15 +676,17 @@
             confirmModal.show();
         }
 
-        function showError(message) {
-            let addressInput = document.getElementById('addressInput');
-            let errorDiv = document.getElementById('addressError');
-            if (errorDiv) {
-                errorDiv.innerHTML = message;
+        function showError(message, inputElement) {
+            let errorDiv = document.getElementById('checkoutError');
+            let errorMsgText = document.getElementById('errorMsgText');
+            if (errorDiv && errorMsgText) {
+                errorMsgText.innerText = message;
                 errorDiv.classList.remove('d-none');
             }
-            addressInput.classList.add('is-invalid');
-            addressInput.focus();
+            if (inputElement) {
+                inputElement.classList.add('is-invalid');
+                inputElement.focus();
+            }
         }
 
         function submitOrderForm() {

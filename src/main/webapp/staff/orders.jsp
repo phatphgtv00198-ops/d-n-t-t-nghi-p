@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Đơn Hàng | Admin</title>
+    <title>Quản Lý Đơn Hàng | Điện Máy Admin</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -87,7 +87,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
@@ -121,7 +121,7 @@
                                 <i class="bi bi-receipt-cutoff"></i>
                             </div>
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Tổng đơn hàng</span>
+                                <span class="text-muted small fw-semibold text-uppercase">Tổng đơn hàng điện máy</span>
                                 <h3 class="fw-bold text-dark mt-1 mb-0">${list.size()}</h3>
                             </div>
                         </div>
@@ -164,7 +164,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
                     <div>
                         <h5 class="fw-bold text-dark mb-1">
-                            <i class="bi bi-map text-danger me-2"></i>Bản đồ tổng quan đơn hàng đã duyệt
+                            <i class="bi bi-map text-danger me-2"></i>Bản đồ tổng quan đơn hàng điện máy đã duyệt
                         </h5>
                         <small class="text-muted">Hiển thị vị trí giao hàng của các đơn đang chuẩn bị vận chuyển</small>
                     </div>
@@ -178,9 +178,9 @@
             <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
                 <div>
                     <h4 class="fw-bold text-dark mb-1">
-                        <i class="bi bi-receipt text-primary me-2"></i>Quản Lý Đơn Hàng
+                        <i class="bi bi-receipt text-primary me-2"></i>Quản Lý Đơn Hàng Điện Máy
                     </h4>
-                    <small class="text-muted">Theo dõi và duyệt đơn hàng từ khách hàng</small>
+                    <small class="text-muted">Theo dõi và duyệt đơn hàng thiết bị điện máy từ khách hàng</small>
                 </div>
             </div>
 

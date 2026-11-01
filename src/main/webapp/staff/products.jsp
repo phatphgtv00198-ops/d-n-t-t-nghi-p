@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Sản Phẩm | Admin</title>
+    <title>Quản Lý Sản Phẩm | Điện Máy Admin</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -95,7 +95,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
@@ -114,7 +114,7 @@
                             <i class="bi bi-box-seam-fill"></i>
                         </div>
                         <div>
-                            <span class="text-muted small fw-semibold text-uppercase">Tổng sản phẩm</span>
+                            <span class="text-muted small fw-semibold text-uppercase">Tổng sản phẩm điện máy</span>
                             <h3 class="fw-bold text-dark mt-1 mb-0">${totalProducts != null ? totalProducts : 0}</h3>
                         </div>
                     </div>
@@ -157,9 +157,9 @@
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                 <div>
                     <h4 class="fw-bold text-dark mb-1">
-                        <i class="bi bi-grid-3x3-gap text-primary me-2"></i>Danh Sách Sản Phẩm
+                        <i class="bi bi-grid-3x3-gap text-primary me-2"></i>Danh Sách Sản Phẩm Điện Máy
                     </h4>
-                    <small class="text-muted">Quản lý toàn bộ danh mục sản phẩm đồ gia dụng</small>
+                    <small class="text-muted">Quản lý toàn bộ danh mục sản phẩm thiết bị điện máy</small>
                 </div>
                 <a href="${pageContext.request.contextPath}/staff/product-add" class="btn btn-primary rounded-pill px-4 shadow-sm fw-semibold">
                     <i class="bi bi-plus-lg me-1"></i> Thêm sản phẩm
@@ -171,7 +171,7 @@
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" name="keyword" value="${keyword}" class="form-control border-start-0 ps-0" placeholder="Tìm tên sản phẩm...">
+                        <input type="text" name="keyword" value="${keyword}" class="form-control border-start-0 ps-0" placeholder="Tìm tên sản phẩm điện máy...">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -214,7 +214,7 @@
                             <tr>
                                 <td colspan="6" class="text-center text-muted py-5">
                                     <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary opacity-50"></i>
-                                    Không tìm thấy sản phẩm phù hợp!
+                                    Không tìm thấy sản phẩm điện máy phù hợp!
                                 </td>
                             </tr>
                         </c:if>
@@ -300,12 +300,12 @@
                                         </a>
                                     </div>
 
-                                    <!-- MODAL XEM NHANH (Nâng cấp UI) -->
+                                    <!-- MODAL XEM NHANH -->
                                     <div class="modal fade text-start" id="quickViewModal${p.productID}" tabindex="-1">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content border-0 rounded-4 shadow">
                                                 <div class="modal-header border-bottom">
-                                                    <h5 class="modal-title fw-bold text-dark"><i class="bi bi-info-circle text-primary me-2"></i>Chi tiết sản phẩm</h5>
+                                                    <h5 class="modal-title fw-bold text-dark"><i class="bi bi-info-circle text-primary me-2"></i>Chi tiết sản phẩm điện máy</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body p-4">

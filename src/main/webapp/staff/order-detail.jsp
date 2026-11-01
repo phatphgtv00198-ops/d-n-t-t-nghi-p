@@ -31,7 +31,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
@@ -172,7 +172,7 @@
                     </script>
 
                     <!-- DANH SÁCH SẢN PHẨM -->
-                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam text-warning me-2"></i>Danh sách sản phẩm</h6>
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam text-warning me-2"></i>Danh sách thiết bị điện máy</h6>
                     <div class="table-responsive mb-4">
                         <table class="table align-middle border">
                             <thead class="table-light">

@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Gia Dụng Admin</title>
+    <title>Dashboard | Điện Máy Admin</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -78,7 +78,7 @@
                 <div class="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
                     <i class="bi bi-shop"></i>
                 </div>
-                <span>Gia Dụng Admin</span>
+                <span>Điện Máy Admin</span>
             </a>
             <div class="d-flex align-items-center gap-2">
                 <span class="text-light small d-none d-md-inline me-2">Xin chào, <strong>Admin</strong></span>
@@ -94,8 +94,8 @@
         <!-- HEADER BANNER -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
-                <h3 class="fw-bold text-dark mb-1">Tổng Quan Hệ Thống</h3>
-                <p class="text-muted small mb-0">Theo dõi báo cáo doanh thu, đơn hàng và hoạt động kinh doanh</p>
+                <h3 class="fw-bold text-dark mb-1">Tổng Quan Hệ Thống Điện Máy</h3>
+                <p class="text-muted small mb-0">Theo dõi báo cáo doanh thu, đơn hàng thiết bị điện máy và hoạt động kinh doanh</p>
             </div>
             <div>
                 <span class="badge bg-white text-dark shadow-sm px-3 py-2 border rounded-pill">
@@ -146,7 +146,7 @@
                             <i class="bi bi-box-seam"></i>
                         </div>
                         <div>
-                            <span class="text-muted small fw-semibold text-uppercase">Sản Phẩm</span>
+                            <span class="text-muted small fw-semibold text-uppercase">Thiết Bị Điện Máy</span>
                             <h4 class="fw-bold text-dark mt-1 mb-0">${totalProducts != null ? totalProducts : 0}</h4>
                         </div>
                     </div>
@@ -175,7 +175,7 @@
             <div class="col-lg-8">
                 <div class="card card-custom p-4 bg-white h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart-line text-primary me-2"></i>Biểu Đồ Doanh Thu</h5>
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart-line text-primary me-2"></i>Biểu Đồ Doanh Thu Điện Máy</h5>
                         <span class="badge bg-light text-secondary border">Năm 2026</span>
                     </div>
                     <div class="position-relative" style="height: 280px;">
@@ -202,7 +202,7 @@
                             <i class="bi bi-box-seam-fill fs-4"></i>
                             <div>
                                 <div class="fw-bold">Danh Sách Sản Phẩm</div>
-                                <div class="small opacity-75">Quản lý giá và kho hàng</div>
+                                <div class="small opacity-75">Quản lý giá và kho hàng điện máy</div>
                             </div>
                         </a>
 
@@ -210,7 +210,7 @@
                             <i class="bi bi-plus-circle-fill fs-4"></i>
                             <div>
                                 <div class="fw-bold">Thêm Sản Phẩm Mới</div>
-                                <div class="small opacity-75">Đăng bán sản phẩm mới</div>
+                                <div class="small opacity-75">Đăng bán thiết bị điện máy mới</div>
                             </div>
                         </a>
 

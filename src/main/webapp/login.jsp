@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập | Cửa Hàng Gia Dụng</title>
+    <title>Đăng Nhập | Cửa Hàng Điện Máy</title>
 
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -130,12 +130,12 @@
                     <div class="col-lg-5 d-none d-lg-flex auth-banner">
                         <div>
                             <a href="${pageContext.request.contextPath}/home" class="text-white text-decoration-none fw-bold fs-4 d-flex align-items-center gap-2 mb-4">
-                                <i class="bi bi-shop fs-3"></i> Gia Dụng Store
+                                <i class="bi bi-shop fs-3"></i> Điện Máy Store
                             </a>
                             <span class="badge bg-white text-primary px-3 py-2 rounded-pill fw-semibold mb-3">Tài khoản thành viên</span>
                             <h3 class="fw-bold mb-3">Chào mừng bạn quay trở lại!</h3>
                             <p class="opacity-75 small leading-relaxed">
-                                Đăng nhập để trải nghiệm mua sắm thiết bị gia dụng chính hãng, theo dõi đơn hàng và nhận nhiều ưu đãi hấp dẫn.
+                                Đăng nhập để trải nghiệm mua sắm thiết bị điện máy chính hãng, theo dõi đơn hàng và nhận nhiều ưu đãi hấp dẫn.
                             </p>
                         </div>
 
@@ -184,7 +184,7 @@
                             </div>
 
                             <!-- Mật khẩu -->
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <label for="password" class="form-label small fw-semibold text-secondary mb-0">Mật khẩu <span class="text-danger">*</span></label>
                                 </div>
@@ -195,6 +195,13 @@
                                         <i class="bi bi-eye" id="toggleIcon"></i>
                                     </button>
                                 </div>
+                            </div>
+
+                            <!-- Link Quên Mật Khẩu -->
+                            <div class="d-flex justify-content-end mb-4">
+                                <a href="${pageContext.request.contextPath}/forgot-password" class="small text-decoration-none text-primary fw-medium">
+                                    Quên mật khẩu?
+                                </a>
                             </div>
 
                             <!-- Nút Submit -->
